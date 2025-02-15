@@ -38,6 +38,32 @@
             border: 1px solid rgba(59, 130, 246, 0.4);
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
+
+        .team-card:hover .team-roster {
+            transform: rotateY(180deg);
+        }
+
+        .team-roster {
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+            transform: rotateY(0deg);
+        }
+
+        .team-card {
+            perspective: 1000px;
+        }
+
+        .tab-button {
+            cursor: pointer;
+            padding: 10px 20px;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid #3B82F6;
+            color: #3B82F6;
+        }
     </style>
 </head>
 <body class="text-white min-h-screen">
@@ -69,11 +95,16 @@
                 "totalMatches": 24,
                 "organizer": "Krafton Inc.",
                 "sponsors": ["Red Bull", "Intel", "AMD", "Logitech"],
+                "coverImage": "tournament-cover.jpg",
                 "prizeDistribution": [
                     {"position": 1, "prize": "₹80,00,000", "width": "40%"},
                     {"position": 2, "prize": "₹40,00,000", "width": "20%"},
                     {"position": 3, "prize": "₹20,00,000", "width": "10%"},
                     {"position": "4-8", "prize": "₹10,00,000", "width": "10%"}
+                ],
+                "groups": [
+                    {"name": "Group A", "teams": ["Team Hydra", "Team Soul"]},
+                    {"name": "Group B", "teams": ["Team Alpha", "Team Beta"]}
                 ],
                 "teams": [
                     {
@@ -82,7 +113,8 @@
                         "wins": 12,
                         "kills": 234,
                         "rating": 9.8,
-                        "logo": "https://randomuser.me/api/portraits/thumb/men/1.jpg"
+                        "logo": "https://randomuser.me/api/portraits/thumb/men/1.jpg",
+                        "roster": ["Player 1", "Player 2", "Player 3", "Player 4"]
                     },
                     {
                         "name": "Team Soul",
@@ -90,7 +122,8 @@
                         "wins": 8,
                         "kills": 15,
                         "rating": 9.5,
-                        "logo": "team-soul.png"
+                        "logo": "team-soul.png",
+                        "roster": ["Sc0utOP", "Mortal", "Regaltos", "Akshat"]
                     }
                 ],
                 "liveMatch": {
@@ -121,6 +154,19 @@
                         "mvp": "Sc0utOP",
                         "logo": "team-soul.png"
                     }
+                ],
+                "matchStandings": [
+                    {
+                        "matchId": 25,
+                        "standings": [
+                            {"team": "Team Hydra", "points": 345, "position": 1},
+                            {"team": "Team Soul", "points": 320, "position": 2}
+                        ]
+                    }
+                ],
+                "overallStandings": [
+                    {"team": "Team Hydra", "points": 1345, "position": 1},
+                    {"team": "Team Soul", "points": 1320, "position": 2}
                 ]
             }
         }
@@ -132,8 +178,15 @@
             const app = document.body;
 
             app.innerHTML = `
+                <!-- Tournament Cover Image -->
+                <div class="relative h-96 bg-cover bg-center" style="background-image: url('${data.tournament.coverImage}');">
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <h1 class="text-5xl font-bold text-white text-center">${data.tournament.name}</h1>
+                    </div>
+                </div>
+
                 <!-- Tournament Header -->
-                <div class="pt-32 pb-20">
+                <div class="pt-16 pb-20">
                     <div class="container mx-auto px-6">
                         <div class="flex flex-col md:flex-row justify-between items-start">
                             <div>
@@ -185,19 +238,43 @@
                         <!-- Add more stats cards as needed -->
                     </div>
 
-                    <!-- Prize Pool Distribution -->
+                    <!-- Prize Pool Distribution Table -->
                     <div class="cyber-border bg-gray-900/50 rounded-xl p-8 mb-16" data-aos="fade-up">
                         <h2 class="text-3xl font-bold mb-6 text-blue-400">Prize Pool Distribution</h2>
-                        <div class="space-y-6">
-                            ${data.tournament.prizeDistribution.map(prize => `
-                                <div>
-                                    <div class="flex justify-between mb-2 text-blue-300">
-                                        <span>${prize.position}${typeof prize.position === 'number' ? (prize.position === 1 ? 'st' : prize.position === 2 ? 'nd' : 'rd') : ''} Place</span>
-                                        <span>${prize.prize}</span>
-                                    </div>
-                                    <div class="prize-progress rounded-full">
-                                        <span style="width: ${prize.width}" class="rounded-full"></span>
-                                    </div>
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th class="text-blue-300">Position</th>
+                                    <th class="text-blue-300">Prize Money</th>
+                                    <th class="text-blue-300">Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.tournament.prizeDistribution.map(prize => `
+                                    <tr>
+                                        <td>${prize.position}${typeof prize.position === 'number' ? (prize.position === 1 ? 'st' : prize.position === 2 ? 'nd' : 'rd') : ''}</td>
+                                        <td>${prize.prize}</td>
+                                        <td>
+                                            <div class="prize-progress rounded-full">
+                                                <span style="width: ${prize.width}" class="rounded-full"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Group Distribution -->
+                    <div class="mb-16" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold mb-8 text-blue-400">Group Distribution</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${data.tournament.groups.map(group => `
+                                <div class="cyber-border bg-gray-900/50 rounded-xl p-6">
+                                    <h3 class="text-2xl font-semibold mb-4 text-blue-400">${group.name}</h3>
+                                    <ul class="list-disc list-inside text-blue-300">
+                                        ${group.teams.map(team => `<li>${team}</li>`).join('')}
+                                    </ul>
                                 </div>
                             `).join('')}
                         </div>
@@ -208,8 +285,8 @@
                         <h2 class="text-3xl font-bold mb-8 text-blue-400">Participating Teams</h2>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             ${data.tournament.teams.map(team => `
-                                <div class="cyber-border bg-gray-900/50 rounded-lg p-4 hover:bg-gray-800 transition-all">
-                                    <div class="flex items-center space-x-4">
+                                <div class="team-card cyber-border bg-gray-900/50 rounded-lg p-4 hover:bg-gray-800 transition-all">
+                                    <div class="team-front flex items-center space-x-4">
                                         <div class="relative">
                                             <img src="${team.logo}" class="w-12 h-12 rounded-full border-2 border-blue-500">
                                             <div class="absolute -bottom-1 -right-1 bg-blue-600 text-xs px-2 py-1 rounded-full">
@@ -221,15 +298,11 @@
                                             <p class="text-sm text-blue-300">Wins: ${team.wins}</p>
                                         </div>
                                     </div>
-                                    <div class="mt-4 flex justify-between text-sm text-blue-200">
-                                        <div>
-                                            <p>Kills</p>
-                                            <p class="text-blue-400">${team.kills}</p>
-                                        </div>
-                                        <div>
-                                            <p>Rating</p>
-                                            <p class="text-blue-400">${team.rating}</p>
-                                        </div>
+                                    <div class="team-roster p-4 bg-gray-800 rounded-lg">
+                                        <h4 class="text-lg font-semibold mb-2 text-blue-400">Roster</h4>
+                                        <ul class="list-disc list-inside text-blue-300">
+                                            ${team.roster.map(player => `<li>${player}</li>`).join('')}
+                                        </ul>
                                     </div>
                                 </div>
                             `).join('')}
@@ -341,10 +414,80 @@
                             `).join('')}
                         </div>
                     </div>
-                </div>
-            `;
 
-            AOS.init({ duration: 1000, once: true });
+                    <!-- Match Standings Section -->
+                    <div class="cyber-border bg-gray-900/50 rounded-xl p-8 mb-16" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold mb-6 text-blue-400">Match Standings</h2>
+                        <div class="flex space-x-4 mb-6">
+                            <div class="tab-button active" onclick="showStandings('overall')">Overall</div>
+                            ${data.tournament.matchStandings.map(match => `
+                                <div class="tab-button" onclick="showStandings('match-${match.matchId}')">Match ${match.matchId}</div>
+                            `).join('')}
+                        </div>
+                        <div id="standings-content">
+                            <div id="overall-standings" class="standings-table">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-blue-300">Position</th>
+                                            <th class="text-blue-300">Team</th>
+                                            <th class="text-blue-300">Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.tournament.overallStandings.map(standing => `
+                                            <tr>
+                                                <td>${standing.position}</td>
+                                                <td>${standing.team}</td>
+                                                <td>${standing.points}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ${data.tournament.matchStandings.map(match => `
+                                <div id="match-standings-${match.matchId}" class="standings-table hidden">
+                                    <table class="w-full text-left">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-blue-300">Position</th>
+                                                <th class="text-blue-300">Team</th>
+                                                <th class="text-blue-300">Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${match.standings.map(standing => `
+                                                <tr>
+                                                    <td>${standing.position}</td>
+                                                    <td>${standing.team}</td>
+                                                    <td>${standing.points}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- YouTube Embed Section -->
+                    <div class="cyber-border bg-gray-900/50 rounded-xl p-8 mb-16" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold mb-6 text-blue-400">Live Stream</h2>
+                        <div class="aspect-w-16 aspect-h-9">
+                            <iframe class="w-full h-full rounded-lg" src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function showStandings(tabId) {
+                        document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+                        document.querySelectorAll('.standings-table').forEach(table => table.classList.add('hidden'));
+
+                        document.querySelector(`.tab-button[onclick="showStandings('${tabId}')"]`).classList.add('active');
+                        document.getElementById(tabId).classList.remove('hidden');
+                    }
+            `;
         });
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

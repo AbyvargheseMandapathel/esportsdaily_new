@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    </head>
+<body class="text-white min-h-screen">
+    <script id="tournamentData" type="application/json">
+        {
+            "tournament": {
+                "teams": [
+                    {
+                        "name": "Team Hydra",
+                        "roster": ["Player 1", "Player 2", "Player 3", "Player 4"]
+                    },
+                    {
+                        "name": "Team Soul",
+                        "roster": ["Sc0utOP", "Mortal", "Regaltos", "Akshat"]
+                    }
+                ],
+                }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = JSON.parse(document.getElementById('tournamentData').textContent);
+
+            // Function to safely embed JSON strings into HTML
+            function escapeJsonString(str) {
+                return str.replace(/`/g, '\\`'); // Escape backticks
+            }
+
+
+            const app = document.body;
+            app.innerHTML = `
+                <div class="mb-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-8 text-blue-400">Participating Teams</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        ${data.tournament.teams.map(team => `
+                            <div class="team-card cyber-border bg-gray-900/50 rounded-lg p-4 hover:bg-gray-800 transition-all">
+                                <div class="team-front flex items-center space-x-4">
+                                    <div class="relative">
+                                        <img src="<span class="math-inline">\{escapeJsonString\(team\.logo\)\}" class\="w\-12 h\-12 rounded\-full border\-2 border\-blue\-500"\>
+<div class\="absolute \-bottom\-1 \-right\-1 bg\-blue\-600 text\-xs px\-2 py\-1 rounded\-full"\>
+\#</span>{team.ranking}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold">${escapeJsonString(team.name)}</h3>
+                                        <p class="text-sm text-blue-300">Wins: ${team.wins}</p>
+                                    </div>
+                                </div>
+                                <div class="team-roster p-4 bg-gray-800 rounded-lg">
+                                    <h4 class="text-lg font-semibold mb-2 text-blue-400">Roster</h4>
+                                    <ul class="list-disc list-inside text-blue-300">
+                                        ${team.roster.map(player => `<li>${escapeJsonString(player)}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                `;
+
+            AOS.init({ duration: 1000, once: true });
+        });
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</body>
+</html>
