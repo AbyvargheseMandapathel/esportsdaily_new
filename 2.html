@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGMI Esports Hub | Tournament Listings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        .tournament-card {
+            perspective: 1000px;
+            transition: transform 0.3s;
+        }
+        
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .tournament-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        body {
+            background: linear-gradient(rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.9)),
+                        url('https://images.unsplash.com/photo-1639754390580-2e7437267698?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+        }
+
+        .bgmi-orange {
+            color: #FF6B00;
+        }
+
+        .bgmi-bg {
+            background-color: #1A1A1A;
+        }
+
+        .bgmi-border {
+            border-color: #FF6B00;
+        }
+
+        #model-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 600px;
+            height: 400px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen">
+    <!-- 3D Model Container -->
+    <div id="model-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img src="bgmi-logo.png" class="h-12 w-12" alt="BGMI Logo">
+                <span class="text-2xl font-bold bgmi-orange">BGMI Esports Hub</span>
+            </div>
+            <div class="flex space-x-8">
+                <a href="#" class="hover:text-orange-500 transition-colors">Home</a>
+                <a href="#" class="hover:text-orange-500 transition-colors">Tournaments</a>
+                <a href="#" class="hover:text-orange-500 transition-colors">Teams</a>
+                <a href="#" class="hover:text-orange-500 transition-colors">Leaderboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative pt-32 pb-20 overflow-hidden">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-6xl font-bold mb-6" data-aos="fade-up">
+                <span class="bgmi-orange">BGMI</span> Tournaments 2024
+            </h1>
+            <p class="text-xl text-gray-300 mb-12" data-aos="fade-up" data-aos-delay="200">
+                Register now for the biggest Battlegrounds Mobile India competitions!
+            </p>
+        </div>
+    </div>
+
+    <!-- Tournaments Section -->
+    <section class="container mx-auto px-6 py-16">
+        <h2 class="text-4xl font-bold mb-12" data-aos="fade-up">Live Tournaments</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="tournaments-container">
+            <!-- Tournament cards will be inserted here -->
+        </div>
+    </section>
+
+    <!-- Dummy Data with Random User API -->
+    <script>
+        const tournaments = [
+            {
+                title: "BGMI India Series 2024",
+                game: "BGMI",
+                dates: "Aug 15 - Sep 1",
+                prize: "₹2 Crore Prize Pool",
+                teams: 4,
+                schedule: [
+                    { stage: "Qualifiers", date: "Aug 15-18" },
+                    { stage: "Semi-Finals", date: "Aug 25-28" },
+                    { stage: "Grand Finals", date: "Sep 1" }
+                ]
+            },
+            {
+                title: "Battlegrounds Masters",
+                game: "BGMI",
+                dates: "Sep 10 - Oct 5",
+                prize: "₹1.5 Crore Prize Pool",
+                teams: 4,
+                schedule: [
+                    { stage: "Group Stage", date: "Sep 10-15" },
+                    { stage: "Quarter Finals", date: "Sep 20-22" },
+                    { stage: "Finals", date: "Oct 5" }
+                ]
+            }
+        ];
+
+        function generateRandomUserImage() {
+            const gender = Math.random() > 0.5 ? 'men' : 'women';
+            const id = Math.floor(Math.random() * 100);
+            return `https://randomuser.me/api/portraits/thumb/${gender}/${id}.jpg`;
+        }
+
+        function createTournamentCards() {
+            const container = document.getElementById('tournaments-container');
+            
+            tournaments.forEach(tournament => {
+                const card = `
+                    <div class="tournament-card" data-aos="zoom-in">
+                        <div class="card-inner relative h-96">
+                            <div class="card-front absolute w-full h-full bg-gray-800/90 rounded-xl p-6 shadow-2xl backdrop-blur-sm">
+                                <div class="bg-orange-500/20 p-4 rounded-lg mb-4">
+                                    <h3 class="text-2xl font-bold">${tournament.title}</h3>
+                                </div>
+                                <div class="flex justify-between text-gray-400 mb-4">
+                                    <span>${tournament.dates}</span>
+                                    <span class="bgmi-orange">${tournament.prize}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    ${Array.from({length: tournament.teams}, () => `
+                                        <img src="${generateRandomUserImage()}" 
+                                             class="w-12 h-12 rounded-full border-2 border-orange-500">
+                                    `).join('')}
+                                </div>
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span>Teams: ${tournament.teams}</span>
+                                        <span class="bgmi-orange">Live Now</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-gray-800/90 rounded-xl p-6 shadow-2xl backdrop-blur-sm">
+                                <h3 class="text-2xl font-bold mb-4">Schedule</h3>
+                                <div class="space-y-3">
+                                    ${tournament.schedule.map(stage => `
+                                        <div class="flex justify-between">
+                                            <span>${stage.stage}</span>
+                                            <span class="bgmi-orange">${stage.date}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <button class="mt-6 w-full bg-orange-500 hover:bg-orange-600 py-2 rounded-lg transition-colors">
+                                    Register Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+        
+        createTournamentCards();
+    </script>
+
+    <!-- 3D Model Loader -->
+    <script>
+        // Three.js initialization and model loading code remains same as previous
+    </script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Rest of the animation code remains same
+    </script>
+</body>
+</html>

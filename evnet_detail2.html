@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGMI India Series 2024 | TournamentHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(rgba(9, 9, 11, 0.95), rgba(9, 9, 11, 0.95)),
+                        url('https://images.unsplash.com/photo-1600861194942-883e6d12c0b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+        }
+
+        .stats-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .prize-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .prize-progress span {
+            height: 100%;
+            background: #3B82F6;
+            display: block;
+            transition: width 1s ease;
+        }
+
+        .cyber-border {
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-black/90 backdrop-blur-md border-b border-blue-500/20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html">
+                    <img src="bgmi-logo.png" class="h-12 w-12" alt="BGMI Logo">
+                </a>
+                <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                    BGMI ESPORTS
+                </span>
+            </div>
+            <div class="flex space-x-8">
+                <a href="#" class="hover:text-blue-400 transition-colors">Back to Tournaments</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="container mx-auto px-6 pb-20">
+        <!-- Content will be populated by JavaScript -->
+    </div>
+
+    <!-- JSON Data -->
+    <script id="tournamentData" type="application/json">
+    {
+        "tournament": {
+            "name": "BGMI India Series 2024",
+            "dates": "Aug 15 - Sep 1, 2024",
+            "prizePool": "₹2 Crore",
+            "totalTeams": 64,
+            "totalMatches": 24,
+            "organizer": "Krafton Inc.",
+            "sponsors": ["Red Bull", "Intel", "AMD", "Logitech"],
+            "format": "Multi-stage tournament with group matches and finals",
+            "rules": [
+                "Squad matches (4 players per team)",
+                "TPP mode only",
+                "No hacking/cheating allowed",
+                "Maximum 25 teams per match"
+            ],
+            "prizeDistribution": [
+                {"position": 1, "prize": "₹80,00,000", "width": "40%"},
+                {"position": 2, "prize": "₹40,00,000", "width": "20%"},
+                {"position": 3, "prize": "₹20,00,000", "width": "10%"},
+                {"position": "4-8", "prize": "₹10,00,000", "width": "10%"}
+            ],
+            "teams": [
+                {
+                    "name": "Team Soul",
+                    "ranking": 1,
+                    "wins": 12,
+                    "kills": 345,
+                    "members": ["Sc0utOP", "Mortal", "Regaltos", "Akshat"],
+                    "logo": "https://via.placeholder.com/100"
+                },
+                {
+                    "name": "Godlike Esports",
+                    "ranking": 2,
+                    "wins": 10,
+                    "kills": 298,
+                    "members": ["Jonathan", "Zgod", "Neyoo", "Spower"],
+                    "logo": "https://via.placeholder.com/100"
+                }
+            ],
+            "schedule": [
+                {
+                    "matchId": 1,
+                    "date": "Aug 15, 2024",
+                    "time": "15:00 IST",
+                    "map": "Erangel",
+                    "teams": 22,
+                    "status": "Upcoming"
+                },
+                {
+                    "matchId": 2,
+                    "date": "Aug 16, 2024",
+                    "time": "15:00 IST",
+                    "map": "Miramar",
+                    "teams": 24,
+                    "status": "Upcoming"
+                }
+            ],
+            "results": [
+                {
+                    "matchId": 0,
+                    "winner": "Team Soul",
+                    "kills": 15,
+                    "mvp": "Sc0utOP",
+                    "map": "Erangel",
+                    "duration": "24m 45s"
+                }
+            ]
+        }
+    }
+    </script>
+
+    <script>
+        const data = JSON.parse(document.getElementById('tournamentData').textContent);
+        const app = document.getElementById('app');
+
+        app.innerHTML = `
+            <!-- Tournament Header -->
+            <div class="pt-32 pb-20">
+                <div class="flex flex-col md:flex-row justify-between items-start">
+                    <div>
+                        <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-white bg-clip-text text-transparent">
+                            ${data.tournament.name}
+                        </h1>
+                        <div class="flex items-center space-x-6 text-gray-300">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-6 h-6 text-blue-400" ...></svg>
+                                <span>${data.tournament.dates}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-6 h-6 text-blue-400" ...></svg>
+                                <span class="text-blue-400">${data.tournament.prizePool} Prize Pool</span>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <p class="text-blue-300">Organized by: ${data.tournament.organizer}</p>
+                            <div class="flex flex-wrap gap-4 mt-4">
+                                ${data.tournament.sponsors.map(sponsor => `
+                                    <span class="px-4 py-2 bg-blue-500/20 rounded-full">${sponsor}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex space-x-4">
+                        <button class="bg-blue-600 hover:bg-blue-700 ...">Live Stream</button>
+                        <button class="border border-blue-500 ...">Standings</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+                <div class="stats-card cyber-border ...">
+                    <h3 class="text-blue-300">Total Teams</h3>
+                    <p class="text-3xl ...">${data.tournament.totalTeams}</p>
+                </div>
+                <!-- Add other stats cards -->
+            </div>
+
+            <!-- Prize Distribution -->
+            <div class="cyber-border ...">
+                <h2 class="text-3xl ...">Prize Distribution</h2>
+                <div class="space-y-6">
+                    ${data.tournament.prizeDistribution.map(prize => `
+                        <div>
+                            <div class="flex justify-between ...">
+                                <span>${prize.position}${typeof prize.position === 'number' ? 'st' : ''} Place</span>
+                                <span>${prize.prize}</span>
+                            </div>
+                            <div class="prize-progress ...">
+                                <span style="width: ${prize.width}"></span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Teams Section -->
+            <div class="mb-16">
+                <h2 class="text-3xl ...">Participating Teams</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    ${data.tournament.teams.map(team => `
+                        <div class="cyber-border ...">
+                            <div class="flex items-center space-x-4">
+                                <img src="${team.logo}" class="w-12 h-12 ...">
+                                <div>
+                                    <h3 class="font-semibold">${team.name}</h3>
+                                    <p class="text-sm ...">Rank: #${team.ranking}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 ...">
+                                <p class="text-blue-300">Members:</p>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    ${team.members.map(member => `
+                                        <span class="text-xs bg-blue-500/20 px-2 py-1 rounded">
+                                            ${member}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Schedule Section -->
+            <div class="mb-16">
+                <h2 class="text-3xl ...">Match Schedule</h2>
+                <div class="space-y-4">
+                    ${data.tournament.schedule.map(match => `
+                        <div class="cyber-border ...">
+                            <div class="flex flex-col md:flex-row ...">
+                                <div class="mb-4 md:mb-0">
+                                    <h3 class="text-xl ...">Match ${match.matchId}</h3>
+                                    <div class="flex items-center space-x-4 ...">
+                                        <span>${match.map}</span>
+                                        <span>•</span>
+                                        <span>${match.teams} Teams</span>
+                                        <span>•</span>
+                                        <span>${match.date} ${match.time}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <button class="bg-blue-600/30 ...">Set Reminder</button>
+                                    <button class="border ...">Predictions</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Previous Matches -->
+            <div>
+                <h2 class="text-3xl ...">Match Results</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${data.tournament.results.map(result => `
+                        <div class="cyber-border ...">
+                            <div class="flex justify-between ...">
+                                <span class="text-blue-300">${result.map}</span>
+                                <span class="text-green-400">Completed</span>
+                            </div>
+                            <div class="my-4">
+                                <div class="text-center ...">
+                                    <img src="${data.tournament.teams.find(t => t.name === result.winner).logo}" 
+                                         class="w-16 h-16 mx-auto">
+                                    <p class="text-xl ...">${result.winner}</p>
+                                    <p class="text-blue-400">${result.kills} Kills</p>
+                                </div>
+                                <div class="mt-4 ...">
+                                    <p class="text-sm ...">MVP: ${result.mvp}</p>
+                                    <p class="text-sm ...">Duration: ${result.duration}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        AOS.init({ duration: 1000, once: true });
+    </script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+    </script>
+    <!-- AOS script remains -->
+</body>
+</html>
